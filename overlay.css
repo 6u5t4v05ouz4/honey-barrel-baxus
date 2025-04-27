@@ -1,0 +1,9 @@
+#baxus-ocr-overlay {
+  background: rgba(24,25,26,0.6) !important;
+  cursor: crosshair !important;
+}
+#baxus-ocr-selection {
+  border: 2px solid #00ff99 !important;
+  background: rgba(0,255,153,0.1) !important;
+  z-index: 1000000 !important;
+}

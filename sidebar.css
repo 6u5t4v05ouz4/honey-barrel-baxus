@@ -1,0 +1,163 @@
+/* Estilos para a barra lateral do Baxus */
+
+#baxus-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background: #1e1f24;
+  color: #f5f6fa;
+  z-index: 1000001;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.25);
+  padding: 0;
+  overflow-y: auto;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  transition: all 0.3s ease;
+  border-left: 1px solid #32343c;
+}
+
+.baxus-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: linear-gradient(to right, #f6f5f0, #f0efe9);
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.baxus-sidebar-logo {
+  height: auto;
+  width: auto;
+  max-height: 38px;
+  display: block;
+}
+
+#baxus-close-sidebar {
+  background: none;
+  border: none;
+  color: #23242a;
+  font-size: 1.5em;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+#baxus-close-sidebar:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+#baxus-sidebar-results {
+  padding: 20px 16px;
+}
+
+.baxus-section-title {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.baxus-bottle-card {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #282a36;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #3a3e4c;
+  overflow: hidden;
+  display: block;
+  width: calc(100% - 2px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.baxus-bottle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.baxus-bottle-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.baxus-bottle-image {
+  width: 80px;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  object-fit: cover;
+}
+
+.baxus-match-percent {
+  background: linear-gradient(90deg,#304ffe 0%,#536dfe 100%);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(83,109,254,0.3);
+  letter-spacing: 0.5px;
+  min-width: 44px;
+  min-height: 20px;
+  margin-left: 12px;
+}
+
+.baxus-bottle-title {
+  color: #e4e6f1;
+  text-decoration: none;
+  font-size: 1.1em;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.baxus-bottle-price {
+  color: #ffeb3b;
+  font-weight: 500;
+  font-size: 1.05em;
+  display: block;
+  margin: 6px 0;
+}
+
+.baxus-bottle-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.baxus-bottle-tag {
+  background: #3a3e4c;
+  color: #c8cae3;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
+
+.baxus-bottle-producer {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #a0a4b8;
+}
+
+.baxus-empty-result {
+  padding: 20px;
+  text-align: center;
+  color: #a0a0a0;
+  font-size: 16px;
+}

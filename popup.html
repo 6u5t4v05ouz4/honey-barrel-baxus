@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BAXUS BAR</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="baxus-bar">
+    <div style="display:flex;flex-direction:column;align-items:center;margin-top:18px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span style="font-size:2.5em;font-weight:700;letter-spacing:0.02em;color:#fff;">BA</span>
+        <img src="icons/icon48.png" alt="Baxus logo" id="start-ocr" style="height:46px;width:46px;cursor:pointer;margin:0 2px;vertical-align:middle;" tabindex="0" aria-label="Select bottle information">
+        <span style="font-size:2.5em;font-weight:700;letter-spacing:0.02em;color:#fff;">US</span>
+      </div>
+    </div>
+    <div style="color:#fff;text-align:center;font-size:1.25em;margin:10px 0 16px 0;opacity:0.85;">Click on the logo to select<br>bottle information</div>
+    <div id="ocr-result" class="result"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

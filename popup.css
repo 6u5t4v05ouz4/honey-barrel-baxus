@@ -1,0 +1,40 @@
+body {
+  background: #18191a;
+  color: #f5f6fa;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  min-width: 250px;
+}
+.baxus-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+}
+.logo {
+  width: 48px;
+  margin-bottom: 12px;
+}
+button#start-ocr {
+  background: #242526;
+  color: #f5f6fa;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+}
+button#start-ocr:hover {
+  background: #3a3b3c;
+}
+.result {
+  background: #23272f;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+  max-width: 200px;
+  word-break: break-all;
+}
