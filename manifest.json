@@ -35,6 +35,9 @@
     {
       "resources": [
         "icons/baxus-sidebar.png",
+        "icons/baxus-popup.png",
+        "icons/baxus-overlay.png",
+        "icons/baxus-marketplace.png",
         "sidebar.css"
       ],
       "matches": ["<all_urls>"]
