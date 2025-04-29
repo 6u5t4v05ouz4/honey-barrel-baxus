@@ -13,14 +13,17 @@ Baxus is a Chrome extension that allows you to identify beverage bottles through
 
 ### Main Interface
 ![Main Interface](icons/baxus-popup.png)
+
 *Main extension interface showing the selection start button*
 
 ### Area Selection
 ![Area Selection](icons/baxus-overlay.png)
+
 *Area selection tool in action*
 
 ### Results
 ![Results](icons/baxus-marketplace.png)
+
 *Sidebar displaying search results*
 
 ## Installation 📦
@@ -105,3 +108,6 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 ## License 📄
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+Developed by Grottan City Lab.
