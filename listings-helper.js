@@ -51,9 +51,9 @@ function extractRelevantLines(text) {
 }
 
 function findMatches(extractedText, listings) {
-  // Pesos dos campos
+  // Pesos dos campos (aumentado peso do nome)
   const WEIGHTS = {
-    name: 4,
+    name: 8, // Prioridade maior para o nome
     Producer: 2,
     Type: 1,
     Size: 0.5,
@@ -81,26 +81,20 @@ function findMatches(extractedText, listings) {
   let exactMatch = null;
   let similar = [];
 
-  // Novo match exato: todos os campos presentes no texto devem bater
+  // Match exato: Verifica se alguma linha tem alta similaridade com o nome da garrafa
+  const EXACT_MATCH_THRESHOLD = 0.95; // Limiar alto para considerar exato
   for (const item of listings) {
-    let allMatch = true;
-    for (const field of FIELD_PATHS) {
-      // Só tenta bater se o campo existe no item
-      const val = normalize(field.get(item));
-      if (val) {
-        // Só exige que bata se algum valor do texto for similar
-        const hit = lines.some(line => val.includes(normalize(line)));
-        if (!hit) {
-          allMatch = false;
-          break;
+    const itemName = item._source?.name;
+    if (itemName) {
+      for (const line of lines) {
+        if (fuzzySimilarity(itemName, line) >= EXACT_MATCH_THRESHOLD) {
+          exactMatch = item;
+          console.log(`[BAXUS-helper] MATCH EXATO encontrado (Similaridade >= ${EXACT_MATCH_THRESHOLD * 100}%):`, itemName);
+          break; // Para o loop interno
         }
       }
     }
-    if (allMatch) {
-      exactMatch = item;
-      console.log('[BAXUS-helper] MATCH EXATO encontrado:', item._source?.name);
-      break;
-    }
+    if (exactMatch) break; // Para o loop externo se encontrou
   }
 
   if (!exactMatch) {
@@ -125,7 +119,9 @@ function findMatches(extractedText, listings) {
           }
           if (sim > bestSim) bestSim = sim;
         }
-        if (bestSim > 0.6) { // só conta se similaridade for relevante
+        // Define um limiar mínimo de similaridade para considerar o campo
+        const similarityThreshold = (key === 'name') ? 0.7 : 0.6;
+        if (bestSim >= similarityThreshold) {
           score += weight * bestSim;
         }
         maxScore += weight;

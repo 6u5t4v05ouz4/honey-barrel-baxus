@@ -117,8 +117,8 @@
   margin-left: 12px;
 }
 
-.baxus-bottle-title {
-  color: #e4e6f1;
+.baxus-bottle-card a.baxus-bottle-title {
+  color: #ffffff; /* Alterado para branco */
   text-decoration: none;
   font-size: 1.1em;
   font-weight: 600;

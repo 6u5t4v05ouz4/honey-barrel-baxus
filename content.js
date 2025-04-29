@@ -2,8 +2,14 @@ function createOverlay() {
   // Prevent multiple overlays
   if (document.getElementById('baxus-ocr-overlay')) return;
   console.log('[BAXUS] createOverlay called');
+
+  // Declare all variables needed across functions at the top
+  let overlay, selectionBox;
+  let startX, startY;
+  let selecting = false;
+
   // Create dark overlay covering everything
-  const overlay = document.createElement('div');
+  overlay = document.createElement('div'); // Assign to the declared variable
   overlay.id = 'baxus-ocr-overlay';
   overlay.style.position = 'fixed';
   overlay.style.inset = '0'; // covers the entire screen
@@ -29,27 +35,101 @@ function createOverlay() {
 
   document.body.appendChild(overlay);
 
-  let startX, startY, selectionBox;
-  let selecting = false;
+  // Define event handlers *before* cleanup so cleanup can access them
+  const onMouseMove = function(ev) {
+    if (!selecting || !selectionBox) return;
+    const width = Math.abs(ev.clientX - startX);
+    const height = Math.abs(ev.clientY - startY);
+    selectionBox.style.width = width + 'px';
+    selectionBox.style.height = height + 'px';
+    selectionBox.style.left = Math.min(ev.clientX, startX) + 'px';
+    selectionBox.style.top = Math.min(ev.clientY, startY) + 'px';
+  };
 
-  function cleanup() {
-    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-    if (selectionBox && selectionBox.parentNode) selectionBox.parentNode.removeChild(selectionBox);
-    window.removeEventListener('keydown', onKeyDown, true);
-  }
+  const onMouseUp = function(ev) {
+    if (!selecting) return;
+    // Listeners will be removed by cleanup function
+    selecting = false;
 
-  function onKeyDown(e) {
+    const endX = ev.clientX;
+    const endY = ev.clientY;
+
+    if (Math.abs(endX - startX) < 5 || Math.abs(endY - startY) < 5) {
+      console.log('[BAXUS] Selection too small, cancelling.');
+      cleanup(); // Call cleanup *after* removing listeners
+      return;
+    }
+
+    try {
+      // Use a minimal timeout just to ensure the final mouseup position is registered
+      setTimeout(() => {
+        try {
+          extractSelectedArea(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY));
+        } catch (error) {
+          console.error('[BAXUS] Error during extractSelectedArea:', error);
+        } finally {
+          cleanup(); // Call cleanup *after* removing listeners and processing
+        }
+      }, 10); // Minimal delay
+    } catch (error) {
+      console.error('[BAXUS] Error setting up extraction timeout:', error);
+      cleanup(); // Call cleanup if timeout setup fails
+    }
+  };
+
+  const onKeyDown = function(e) {
     if (e.key === 'Escape') {
+      console.log('[BAXUS] Escape key pressed, cleaning up.');
       cleanup();
     }
-  }
-  window.addEventListener('keydown', onKeyDown, true);
+  };
 
+  // Define cleanup function - now has access to all handlers and overlay
+  function cleanup() {
+    // Check if cleanup has already run significantly
+    if (!selecting && !document.getElementById('baxus-ocr-overlay')) {
+        console.log('[BAXUS] Cleanup already likely completed, skipping redundant actions.');
+        return;
+    }
+    console.log('[BAXUS] Cleanup called');
+
+    // Remove all event listeners first, using the handler references
+    window.removeEventListener('mousemove', onMouseMove, true);
+    window.removeEventListener('mouseup', onMouseUp, true);
+    window.removeEventListener('keydown', onKeyDown, true);
+
+    // Attempt to remove DOM elements by ID and reference
+    const currentOverlay = document.getElementById('baxus-ocr-overlay');
+    if (currentOverlay) {
+        currentOverlay.onmousedown = null; // Clear the mousedown handler
+        if (currentOverlay.parentNode) {
+            currentOverlay.parentNode.removeChild(currentOverlay);
+        }
+    }
+    const currentSelectionBox = document.getElementById('baxus-ocr-selection');
+    if (currentSelectionBox && currentSelectionBox.parentNode) {
+        currentSelectionBox.parentNode.removeChild(currentSelectionBox);
+    }
+
+    // Reset state variables only once
+    if (selecting) {
+        selecting = false;
+        startX = null;
+        startY = null;
+        selectionBox = null; // Clear reference to the variable
+        overlay = null; // Clear reference to the variable
+        console.log('[BAXUS] State reset.');
+    }
+  }
+
+  // Attach initial listeners
   overlay.onmousedown = function(e) {
     if (selecting) return;
     selecting = true;
     startX = e.clientX;
     startY = e.clientY;
+
+    // Create selection box
     selectionBox = document.createElement('div');
     selectionBox.id = 'baxus-ocr-selection';
     selectionBox.style.position = 'fixed';
@@ -60,26 +140,13 @@ function createOverlay() {
     selectionBox.style.zIndex = '1000000';
     document.body.appendChild(selectionBox);
 
-    overlay.onmousemove = function(ev) {
-      const width = Math.abs(ev.clientX - startX);
-      const height = Math.abs(ev.clientY - startY);
-      selectionBox.style.width = width + 'px';
-      selectionBox.style.height = height + 'px';
-      selectionBox.style.left = Math.min(ev.clientX, startX) + 'px';
-      selectionBox.style.top = Math.min(ev.clientY, startY) + 'px';
-    };
-
-    overlay.onmouseup = function(ev) {
-      overlay.onmousemove = null;
-      overlay.onmouseup = null;
-      const endX = ev.clientX;
-      const endY = ev.clientY;
-      setTimeout(() => {
-        extractSelectedArea(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY));
-        cleanup();
-      }, 100);
-    };
+    // Add window listeners for move and up events
+    window.addEventListener('mousemove', onMouseMove, true);
+    window.addEventListener('mouseup', onMouseUp, true);
   };
+
+  // Add keydown listener to window
+  window.addEventListener('keydown', onKeyDown, true);
 }
 
 
@@ -226,11 +293,12 @@ async function extractSelectedArea(x, y, width, height) {
     const texts = [];
     const selectionRect = { left: x, right: x + width, top: y, bottom: y + height };
     function isInSelection(rect) {
+      // Verifica sobreposição em vez de contenção total
       return (
-        rect.left >= selectionRect.left &&
-        rect.right <= selectionRect.right &&
-        rect.top >= selectionRect.top &&
-        rect.bottom <= selectionRect.bottom
+        rect.left < selectionRect.right &&
+        rect.right > selectionRect.left &&
+        rect.top < selectionRect.bottom &&
+        rect.bottom > selectionRect.top
       );
     }
     document.querySelectorAll('body *').forEach(el => {
